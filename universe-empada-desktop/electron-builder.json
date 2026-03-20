@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/electron/electron-builder/master/package-schema.json",
+  "appId": "com.universe.empadas.desktop",
+  "productName": "Universe Empadas",
+  "directories": {
+    "output": "dist"
+  },
+  "files": [
+    "src/**/*",
+    "node_modules/**/*"
+  ],
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": ["x64"]
+      }
+    ],
+    "icon": "resources/icons/icon.ico"
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true
+  }
+}

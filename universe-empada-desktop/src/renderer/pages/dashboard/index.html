@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="../../styles/dashboard.css">
+</head>
+
+<body>
+  <div class="dashboard">
+    <div class="metrics-grid">
+      <div class="metric-card vendas">
+        <div class="metric-icon">💰</div>
+        <div class="metric-value" data-metric="vendasHoje">0</div>
+        <div class="metric-label">Vendas Hoje</div>
+      </div>
+      <div class="metric-card producao">
+        <div class="metric-icon">🏭</div>
+        <div class="metric-value" data-metric="producaoHoje">0</div>
+        <div class="metric-label">Produção Hoje</div>
+      </div>
+      <div class="metric-card estoque">
+        <div class="metric-icon">📦</div>
+        <div class="metric-value" data-metric="estoqueTotal">0</div>
+        <div class="metric-label">Estoque Total</div>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3>Vendas por Produto</h3>
+        <canvas id="vendasChart"></canvas>
+      </div>
+      <div class="chart-card">
+        <h3>Produção Semanal</h3>
+        <canvas id="producaoChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+
+</html>

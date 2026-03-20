@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Produtos</title>
+  <link rel="stylesheet" href="../../styles/components.css">
+</head>
+
+<body>
+  <div class="page-header">
+    <h2>Produtos</h2>
+    <button class="btn-primary" onclick="novoProduto()">+ Novo Produto</button>
+  </div>
+
+  <div class="table-container">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Categoria</th>
+          <th>Preço</th>
+          <th>Custo</th>
+          <th>Estoque</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="produtos-table">
+        <!-- Produtos carregados via JS -->
+      </tbody>
+    </table>
+  </div>
+
+  <script src="produtos.js"></script>
+</body>
+
+</html>

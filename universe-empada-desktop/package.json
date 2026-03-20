@@ -1,0 +1,41 @@
+{
+  "name": "universe-empada-desktop",
+  "version": "1.0.0",
+  "description": "Aplicação desktop para gerenciamento de empadas",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "keywords": ["electron", "empadas", "gestao"],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "^latest",
+    "electron-builder": "^latest",
+    "nodemon": "^latest"
+  },
+  "dependencies": {
+    "express": "^4.18.0",
+    "mysql2": "^3.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.0"
+  },
+  "build": {
+    "appId": "com.universe.empadas",
+    "productName": "Universe Empadas",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis"
+    }
+  }
+}
