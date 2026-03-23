@@ -32,11 +32,7 @@ universe-empada-desktop/
 
 ## 🚀 COMO EXECUTAR
 
-1. **Configure o MySQL:**
-   ```bash
-   npm run db:init
-   ```
-   Update .env with your DB_PASSWORD
+1. **Configure o MySQL:** Edit `.env` with your MySQL creds (DB_USER=root, DB_PASSWORD=, DB_NAME=universe_empada). Create DB/tables:\n   ```bash\n   npm run db:init\n   ```
 
 2. **Instale as dependências:**
    ```bash
