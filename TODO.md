@@ -1,23 +1,23 @@
-# Setup & Implementation Plan for Universe Empada Desktop
+# Universe Empada Desktop - Implementation TODO
 
-## Current Status
-- [x] Project structure analyzed
-- [x] Key files reviewed (package.json, schema.sql, models, controllers)
-- [x] .env created
-- [ ] MySQL DB initialized (schema + seeds)
-- [x] npm install completed
-- [ ] npm run dev tested
-- [ ] APIs verified (/health, /produtos)
-- [x] Electron app window opens with dashboard (npm start)
-- [ ] Frontend data loading via IPC
-- [x] PowerShell npm scripts policy fixed permanently
+## Plan Breakdown (Approved)
+**Current Step:** Implement frontend completion + producao backend module
 
-## Next Steps After DB Setup
-1. Implement missing renderer JS (dashboard.js, produtos.js)
-2. Add Chart.js for dashboard graphs
-3. CRUD forms for produtos/producao
-4. Production module UI
-5. User auth
-6. Auto-backup
+**✅ Step 1: Update CSS (main.css) - Complete styles with modals/charts**
+**✅ Step 2: Update renderer.js - Full SPA with pages, Chart.js, modals**
+**✅ Step 3: Update producao.routes.js - Full controller routes**
+**✅ Step 4: Enhance producao.controller.js - Add missing methods**
+**✅ Step 5: Enhance producao.model.js - Add advanced queries**
 
-Updated: 2024 - npm issues resolved, PowerShell policy fixed. Next: DB setup (.env MySQL password needed).
+**⏳ Remaining Steps:**
+- [ ] Test app: npm start (verify frontend/backend)
+- [ ] Implement missing APIs (vendas/perdas/relatorios full)
+- [ ] CRUD modals complete (producao/venda/perda)
+- [ ] User auth
+- [ ] PDF export (relatorios)
+- [ ] Git commit & push
+
+**Next:** Test `npm start`, verify dashboard/charts, producao CRUD.
+
+Updated: Frontend/backend producao enhanced. Testing next.
+
