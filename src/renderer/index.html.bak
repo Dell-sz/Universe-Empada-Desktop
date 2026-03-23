@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universe da Empada - Controle de Produção</title>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+    <div class="app">
+        <nav class="sidebar">
+            <div class="logo">
+                <h1>Universe da Empada</h1>
+            </div>
+            <ul class="menu">
+                <li class="active"><a href="#dashboard">📊 Dashboard</a></li>
+                <li><a href="#produtos">📦 Produtos</a></li>
+                <li><a href="#producao">🏭 Produção</a></li>
+                <li><a href="#vendas">💰 Vendas</a></li>
+                <li><a href="#estoque">📋 Estoque</a></li>
+                <li><a href="#relatorios">📈 Relatórios</a></li>
+            </ul>
+        </nav>
+        
+        <main class="content">
+            <header class="top-bar">
+                <h2 id="page-title">Dashboard</h2>
+                <div class="user-info">
+                    <span>Funcionário: João</span>
+                </div>
+            </header>
+            
+            <div class="page-content" id="page-content">
+                <!-- Conteúdo carregado dinamicamente -->
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <h3>Produção Hoje</h3>
+                        <p class="card-value" id="producao-hoje">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Vendas Hoje</h3>
+                        <p class="card-value" id="vendas-hoje">R$ 0,00</p>
+                    </div>
+                    <div class="card">
+                        <h3>Estoque Baixo</h3>
+                        <p class="card-value" id="estoque-baixo">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Total Produtos</h3>
+                        <p class="card-value" id="total-produtos">0</p>
+                    </div>
+                </div>
+                
+                <div class="quick-actions">
+                    <button class="btn btn-primary" onclick="loadProdutos()">Carregar Produtos</button>
+                    <button class="btn btn-success" onclick="registrarProducao()">Registrar Produção</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="renderer.js"></script>
+</body>
+</html>
+

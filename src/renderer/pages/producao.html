@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produção - Universe da Empada</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="../styles/main.css">
+    <style>
+        .producao-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .date-filter {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .date-filter input {
+            padding: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+        
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-box {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .stat-box h4 {
+            color: #666;
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+        
+        .stat-box .value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .producao-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .back-button {
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            padding: 0 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #4a5568;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+        
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .producao-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .producoes-list {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="window.location.href='../dashboard.html'">← Voltar ao Dashboard</button>
+    
+    <div class="producao-container">
+        <div class="producao-header">
+            <div>
+                <h2>🏭 Registro de Produção</h2>
+            </div>
+            <div class="date-filter">
+                <button class="btn btn-primary" onclick="showProducaoModal()">➕ Nova Produção</button>
+            </div>
+        </div>
+        
+        <div class="stats-row" id="stats-row">
+            <div class="stat-box">
+                <h4>Produção Hoje</h4>
+                <div class="value" id="producao-hoje">-</div>
+            </div>
+            <div class="stat-box">
+                <h4>Semana Corrente</h4>
+                <div class="value" id="producao-semana">-</div>
+            </div>
+            <div class="stat-box">
+                <h4>Média Diária</h4>
+                <div class="value" id="media-diaria">-</div>
+            </div>
+        </div>
+        
+        <div id="producoes-list" class="producoes-list">
+            <div class="loading">Carregando produções...</div>
+        </div>
+    </div>
+    
+    <div id="producao-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Nova Produção</h3>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="producao-id">
+                <div class="form-group">
+                    <label>Produto *</label>
+                    <select id="producao-produto">
+                        <!-- Loaded dynamically -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quantidade *</label>
+                    <input type="number" id="producao-quantidade" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Funcionário</label>
+                    <input type="text" id="producao-funcionario" placeholder="Nome do funcionário">
+                </div>
+                <div class="form-group">
+                    <label>Observações</label>
+                    <textarea id="producao-observacoes" rows="3"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="salvarProducao()">Salvar</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+const API_URL = 'http://localhost:3000/api';
+        let produtos = [];
+        let producoes = [];
+        let currentFilter = 'hoje';
+        
+        async function loadProducao() {
+            try {
+                const [prods, prodsList] = await Promise.all([
+                    fetch(`${API_URL}/produtos`).then(r => r.json()),
+                    fetch(`${API_URL}/producao?limit=50`).then(r => r.json())
+                ]);
+                
+                produtos = prods;
+                producoes = prodsList;
+                renderProducao();
+                loadStats();
+            } catch (error) {
+                document.getElementById('producoes-list').innerHTML = 
+                    '<div class="error">Erro ao carregar produções</div>';
+            }
+        }
+        
+        function renderProducao() {
+            const html = producoes.map(p => `
+                <div class="producao-card">
+                    <div>
+                        <strong>${p.produto_nome}</strong> - ${p.quantidade} unidades
+                        <div style="font-size:0.85rem;color:#666;">
+                            ${new Date(p.data_producao).toLocaleString('pt-BR')} | ${p.funcionario || 'N/A'}
+                        </div>
+                    </div>
+                </div>
+            `).join('') || '<div class="loading">Nenhuma produção registrada</div>';
+            
+            document.getElementById('producoes-list').innerHTML = html;
+        }
+        
+        async function loadStats() {
+            try {
+                const hoje = await fetch(`${API_URL}/producao/today`).then(r => r.json());
+                document.getElementById('producao-hoje').textContent = hoje.total || 0;
+            } catch (error) {
+                console.error('Erro stats');
+            }
+        }
+        
+        function showProducaoModal(producao = null) {
+            const modal = document.getElementById('producao-modal');
+            const title = document.querySelector('#producao-modal h3');
+            
+            title.textContent = producao ? 'Editar Produção' : 'Nova Produção';
+            
+            // Load produtos
+            const select = document.getElementById('producao-produto');
+            select.innerHTML = produtos.map(p => `<option value="${p.id}">${p.nome}</option>`).join('');
+            
+            if (producao) {
+                document.getElementById('producao-id').value = producao.id;
+                document.getElementById('producao-produto').value = producao.produto_id;
+                document.getElementById('producao-quantidade').value = producao.quantidade;
+                document.getElementById('producao-funcionario').value = producao.funcionario;
+                document.getElementById('producao-observacoes').value = producao.observacoes;
+            } else {
+                document.getElementById('producao-id').value = '';
+                document.getElementById('producao-quantidade').value = '';
+                document.getElementById('producao-funcionario').value = '';
+                document.getElementById('producao-observacoes').value = '';
+            }
+            
+            modal.classList.add('active');
+        }
+        
+        async function salvarProducao() {
+            const id = document.getElementById('producao-id').value;
+            const data = {
+                produto_id: parseInt(document.getElementById('producao-produto').value),
+                quantidade: parseInt(document.getElementById('producao-quantidade').value),
+                funcionario: document.getElementById('producao-funcionario').value,
+                observacoes: document.getElementById('producao-observacoes').value
+            };
+            
+            try {
+                let response;
+                if (id) {
+                    response = await fetch(`${API_URL}/producao/${id}`, {
+                        method: 'PUT',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(data)
+                    });
+                } else {
+                    response = await fetch(`${API_URL}/producao`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(data)
+                    });
+                }
+                
+                if (response.ok) {
+                    closeModal();
+                    loadProducao();
+                }
+            } catch (error) {
+                alert('Erro ao salvar');
+            }
+        }
+        
+        function closeModal() {
+            document.getElementById('producao-modal').classList.remove('active');
+        }
+        
+        // Init
+        loadProducao();
+        setInterval(loadProducao, 30000);
+    </script>
+</body>
+</html>

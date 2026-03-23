@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos - Universe da Empada</title>
+    <link rel="stylesheet" href="../styles/main.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        .produtos-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .search-box {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .search-box input {
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            width: 250px;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 8px 16px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        .produto-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .produto-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .produto-info {
+            flex: 1;
+        }
+        
+        .produto-nome {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .produto-detalhes {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .produto-acoes {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+        
+        .badge {
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        
+        .badge-frito { background: #fed7d7; color: #c53030; }
+        .badge-assado { background: #feebc8; color: #c05621; }
+        .badge-empada { background: #c6f6d5; color: #276749; }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-close {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #a0aec0;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+            padding: 0 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #4a5568;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+        
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .estoque-status {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .status-ok { background: #48bb78; }
+        .status-warning { background: #ed8936; }
+        .status-danger { background: #f56565; }
+        
+        .back-button {
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        
+        .produtos-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .produtos-list {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        .error {
+            color: #f56565;
+            text-align: center;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+    <button class="back-button" onclick="window.location.href='../dashboard.html'">← Voltar ao Dashboard</button>
+    
+    <div class="produtos-container">
+        <div class="produtos-header">
+            <div class="search-box">
+                <input type="text" id="search-produto" placeholder="🔍 Buscar produto..." onkeyup="filterProdutos()">
+                <button class="btn btn-primary" onclick="showProdutoModal()">+ Novo Produto</button>
+            </div>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="todos" onclick="filterByCategory('todos')">Todos</button>
+                <button class="filter-btn" data-filter="frito" onclick="filterByCategory('frito')">🍗 Fritos</button>
+                <button class="filter-btn" data-filter="assado" onclick="filterByCategory('assado')">🔥 Assados</button>
+                <button class="filter-btn" data-filter="empada" onclick="filterByCategory('empada')">🥧 Empadas</button>
+            </div>
+        </div>
+        
+        <div id="produtos-list" class="produtos-list">
+            <div class="loading">Carregando produtos...</div>
+        </div>
+    </div>
+    
+    <div id="produto-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Novo Produto</h3>
+                <span class="modal-close" onclick="closeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="produto-id">
+                <div class="form-group">
+                    <label>Nome do Produto *</label>
+                    <input type="text" id="produto-nome" placeholder="Ex: Coxinha de Frango">
+                </div>
+                <div class="form-group">
+                    <label>Categoria *</label>
+                    <select id="produto-categoria">
+                        <option value="frito">Frito</option>
+                        <option value="assado">Assado</option>
+                        <option value="empada">Empada</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Preço de Venda (R$) *</label>
+                    <input type="number" step="0.01" id="produto-preco" placeholder="0,00">
+                </div>
+                <div class="form-group">
+                    <label>Estoque Mínimo</label>
+                    <input type="number" id="produto-estoque-min" value="10">
+                </div>
+                <div class="form-group">
+                    <label>Descrição (Opcional)</label>
+                    <textarea id="produto-descricao" rows="3" placeholder="Descrição do produto..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" onclick="closeModal()">Cancelar</button>
+                <button class="btn btn-primary" onclick="salvarProduto()">Salvar</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+const API_URL = 'http://localhost:3000/api';
+        let produtos = [];
+        let currentFilter = 'todos';
+        
+        async function loadProdutos() {
+            try {
+                const response = await fetch(`${API_URL}/produtos`);
+                produtos = await response.json();
+                renderProdutos();
+            } catch (error) {
+                document.getElementById('produtos-list').innerHTML = 
+                    '<div class="error">Erro ao carregar produtos. Verifique a conexão com o servidor.</div>';
+            }
+        }
+        
+        function renderProdutos() {
+            let filtered = produtos;
+            
+            if (currentFilter !== 'todos') {
+                filtered = produtos.filter(p => p.categoria === currentFilter);
+            }
+            
+            const searchTerm = document.getElementById('search-produto')?.value.toLowerCase();
+            if (searchTerm) {
+                filtered = filtered.filter(p => p.nome.toLowerCase().includes(searchTerm));
+            }
+            
+            if (filtered.length === 0) {
+                document.getElementById('produtos-list').innerHTML = 
+                    '<div class="loading">Nenhum produto encontrado.</div>';
+                return;
+            }
+            
+            const html = filtered.map(produto => `
+                <div class="produto-card" onclick="editarProduto(${produto.id})">
+                    <div class="produto-info">
+                        <div class="produto-nome">
+                            <span class="estoque-status ${getStatusClass(produto)}"></span>
+                            ${produto.nome}
+                        </div>
+                        <div class="produto-detalhes">
+                            <span class="badge badge-${produto.categoria}">${getCategoriaLabel(produto.categoria)}</span>
+                            <span>💰 R$ ${parseFloat(produto.preco_venda).toFixed(2)}</span>
+                            <span>📊 Estoque Mínimo: ${produto.estoque_minimo}</span>
+                        </div>
+                    </div>
+                    <div class="produto-acoes">
+                        <button class="btn-small" onclick="event.stopPropagation(); editarProduto(${produto.id})">
+                            ✏️ Editar
+                        </button>
+                        <button class="btn-small btn-danger" onclick="event.stopPropagation(); excluirProduto(${produto.id})">
+                            🗑️ Excluir
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('produtos-list').innerHTML = html;
+        }
+        
+        function getStatusClass(produto) {
+            return 'status-ok'; // Implement based on real stock logic later
+        }
+        
+        function getCategoriaLabel(categoria) {
+            const labels = {
+                'frito': '🍗 Frito',
+                'assado': '🔥 Assado',
+                'empada': '🥧 Empada'
+            };
+            return labels[categoria] || categoria;
+        }
+        
+        function filterProdutos() {
+            renderProdutos();
+        }
+        
+        function filterByCategory(category) {
+            currentFilter = category;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === category);
+            });
+            renderProdutos();
+        }
+        
+        function showProdutoModal(produto = null) {
+            const modal = document.getElementById('produto-modal');
+            const title = document.getElementById('modal-title');
+            
+            if (produto) {
+                title.textContent = 'Editar Produto';
+                document.getElementById('produto-id').value = produto.id;
+                document.getElementById('produto-nome').value = produto.nome;
+                document.getElementById('produto-categoria').value = produto.categoria;
+                document.getElementById('produto-preco').value = produto.preco_venda;
+                document.getElementById('produto-estoque-min').value = produto.estoque_minimo;
+                document.getElementById('produto-descricao').value = produto.descricao || '';
+            } else {
+                title.textContent = 'Novo Produto';
+                document.getElementById('produto-id').value = '';
+                document.getElementById('produto-nome').value = '';
+                document.getElementById('produto-categoria').value = 'frito';
+                document.getElementById('produto-preco').value = '';
+                document.getElementById('produto-estoque-min').value = '10';
+                document.getElementById('produto-descricao').value = '';
+            }
+            
+            modal.classList.add('active');
+        }
+        
+        window.editarProduto = async (id) => {
+            try {
+                const response = await fetch(`${API_URL}/produtos/${id}`);
+                const produto = await response.json();
+                showProdutoModal(produto);
+            } catch (error) {
+                alert('Erro ao carregar produto');
+            }
+        };
+        
+        window.excluirProduto = async (id) => {
+            if (confirm('Tem certeza que deseja excluir este produto?')) {
+                try {
+                    await fetch(`${API_URL}/produtos/${id}`, { method: 'DELETE' });
+                    alert('Produto excluído!');
+                    loadProdutos();
+                } catch (error) {
+                    alert('Erro ao excluir');
+                }
+            }
+        };
+        
+        async function salvarProduto() {
+            const id = document.getElementById('produto-id').value;
+            const produto = {
+                nome: document.getElementById('produto-nome').value,
+                categoria: document.getElementById('produto-categoria').value,
+                preco_venda: parseFloat(document.getElementById('produto-preco').value),
+                estoque_minimo: parseInt(document.getElementById('produto-estoque-min').value),
+                descricao: document.getElementById('produto-descricao').value
+            };
+            
+            if (!produto.nome || !produto.preco_venda) {
+                alert('Preencha campos obrigatórios');
+                return;
+            }
+            
+            try {
+                const method = id ? 'PUT' : 'POST';
+                const url = id ? `${API_URL}/produtos/${id}` : `${API_URL}/produtos`;
+                const response = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(produto)
+                });
+                
+                if (response.ok) {
+                    alert(id ? 'Atualizado!' : 'Cadastrado!');
+                    closeModal();
+                    loadProdutos();
+                } else {
+                    alert('Erro ao salvar');
+                }
+            } catch (error) {
+                alert('Erro ao salvar');
+            }
+        }
+        
+        function closeModal() {
+            document.getElementById('produto-modal').classList.remove('active');
+        }
+        
+        // Init
+        loadProdutos();
+        setInterval(loadProdutos, 30000);
+    </script>
+</body>
+</html>

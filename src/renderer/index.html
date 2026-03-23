@@ -1,65 +1,186 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Universe da Empada - Controle de Produção</title>
-    <link rel="stylesheet" href="styles/main.css">
+    <title>Universe da Empada</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 500px;
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            background: #f0f0f0;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px 0;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        
+        button:hover {
+            background: #5a67d8;
+        }
+        
+        .info {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .api-test {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: left;
+        }
+        
+        .api-test pre {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 5px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+    </style>
 </head>
 <body>
-    <div class="app">
-        <nav class="sidebar">
-            <div class="logo">
-                <h1>Universe da Empada</h1>
-            </div>
-            <ul class="menu">
-                <li class="active"><a href="#dashboard">📊 Dashboard</a></li>
-                <li><a href="#produtos">📦 Produtos</a></li>
-                <li><a href="#producao">🏭 Produção</a></li>
-                <li><a href="#vendas">💰 Vendas</a></li>
-                <li><a href="#estoque">📋 Estoque</a></li>
-                <li><a href="#relatorios">📈 Relatórios</a></li>
-            </ul>
-        </nav>
+    <div class="container">
+        <h1>🌌 Universe da Empada</h1>
+        <p>Sistema de Controle de Produção</p>
         
-        <main class="content">
-            <header class="top-bar">
-                <h2 id="page-title">Dashboard</h2>
-                <div class="user-info">
-                    <span>Funcionário: João</span>
-                </div>
-            </header>
-            
-            <div class="page-content" id="page-content">
-                <!-- Conteúdo carregado dinamicamente -->
-                <div class="dashboard-cards">
-                    <div class="card">
-                        <h3>Produção Hoje</h3>
-                        <p class="card-value" id="producao-hoje">0</p>
-                    </div>
-                    <div class="card">
-                        <h3>Vendas Hoje</h3>
-                        <p class="card-value" id="vendas-hoje">R$ 0,00</p>
-                    </div>
-                    <div class="card">
-                        <h3>Estoque Baixo</h3>
-                        <p class="card-value" id="estoque-baixo">0</p>
-                    </div>
-                    <div class="card">
-                        <h3>Total Produtos</h3>
-                        <p class="card-value" id="total-produtos">0</p>
-                    </div>
-                </div>
-                
-                <div class="quick-actions">
-                    <button class="btn btn-primary" onclick="loadProdutos()">Carregar Produtos</button>
-                    <button class="btn btn-success" onclick="registrarProducao()">Registrar Produção</button>
-                </div>
-            </div>
-        </main>
+        <div id="status" class="status">
+            <div class="spinner"></div>
+            <p>Inicializando...</p>
+        </div>
+        
+        <button onclick="testAPI()">Testar Conexão com API</button>
+        
+        <div id="api-result" class="api-test" style="display: none;">
+            <strong>Resultado da API:</strong>
+            <pre id="api-data"></pre>
+        </div>
+        
+        <div class="info">
+            <strong>Backend:</strong> http://localhost:3000<br>
+            <strong>Status:</strong> Aguardando conexão...
+        </div>
     </div>
     
-    <script src="renderer.js"></script>
+    <script>
+        async function testAPI() {
+            const resultDiv = document.getElementById('api-result');
+            const dataPre = document.getElementById('api-data');
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/health');
+                const data = await response.json();
+                dataPre.textContent = JSON.stringify(data, null, 2);
+                resultDiv.style.display = 'block';
+            } catch (error) {
+                dataPre.textContent = 'Erro: ' + error.message;
+                resultDiv.style.display = 'block';
+            }
+        }
+        
+        async function checkBackend() {
+            const statusDiv = document.getElementById('status');
+            
+            try {
+                const response = await fetch('http://localhost:3000/api/health');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    statusDiv.className = 'status success';
+                    statusDiv.innerHTML = '<p>✅ Backend conectado com sucesso!</p>';
+                    
+                    // Tentar carregar produtos
+                    const produtosResponse = await fetch('http://localhost:3000/api/produtos');
+                    const produtos = await produtosResponse.json();
+                    
+                    statusDiv.innerHTML += <p>📦  produtos carregados</p>;
+                    
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 2000);
+                } else {
+                    throw new Error('Resposta inválida');
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.innerHTML = '<p>❌ Erro ao conectar ao backend</p>';
+                statusDiv.innerHTML += <p><small></small></p>;
+                statusDiv.innerHTML += '<p>Tentando novamente em 3 segundos...</p>';
+                
+                setTimeout(checkBackend, 3000);
+            }
+        }
+        
+        // Iniciar verificação
+        setTimeout(checkBackend, 1000);
+    </script>
 </body>
 </html>
-
