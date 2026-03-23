@@ -7,18 +7,19 @@ const validateId = (req, res, next) => {
 };
 
 const validateProduto = (req, res, next) => {
-  const { nome, preco, custo } = req.body;
-  if (!nome || typeof preco !== 'number' || typeof custo !== 'number') {
+  const { nome, categoria, preco_venda, estoque_minimo } = req.body;
+  if (!nome || !categoria || typeof preco_venda !== 'number') {
     return res.status(400).json({
-      error: 'Nome, preço e custo são obrigatórios'
+      error: 'Nome, categoria e preco_venda são obrigatórios'
     });
   }
-  if (preco <= 0 || custo <= 0) {
+  if (preco_venda <= 0) {
     return res.status(400).json({
-      error: 'Preço e custo devem ser maiores que zero'
+      error: 'Preço de venda deve ser maior que zero'
     });
   }
   next();
 };
+
 
 module.exports = { validateId, validateProduto };

@@ -18,14 +18,16 @@ const promisePool = pool.promise();
 
 // Testar conexão
 const testConnection = async () => {
+
     try {
         const [rows] = await promisePool.query('SELECT 1 + 1 AS solution');
         console.log('✅ Banco de dados conectado com sucesso!');
         return true;
     } catch (error) {
         console.error('❌ Erro ao conectar ao banco de dados:', error);
-        return false;
+        throw error;
     }
+
 };
 
 module.exports = {

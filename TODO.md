@@ -1,12 +1,28 @@
-# Universe Empada Desktop - Task Progress
+# Universe Empada - Fix Port 3001 Task
 
-## Current Task: Fix SyntaxError in main.js
+## ✅ Step 1: Analyze files (Completed)
+- [x] Identified files with port 3000 via reads/search
+- [x] Confirmed changes needed in 4 files (+.env skipped)
+- [x] User approved plan
 
-### Steps from Approved Plan:
-- [x] **Step 1**: Create TODO.md with progress tracking
-- [x] **Step 2**: Edit src/main/main.js to fix malformed fetch call in ipcMain.handler
-- [x] **Step 3**: Test by running `npm run dev` (no SyntaxError, app launching, backend starting)
+## ✅ Step 2: Update configuration (Skipped)
+- [x] .env access denied by policy - manual update recommended
 
-**Task Complete**: SyntaxError fixed. Main.js now syntactically correct and functional.
+## ✅ Step 3: Update main.js
+- [x] Replaced http://localhost:3000 → 3001 in ipcMain
 
-Run `npm run dev` again if needed. Ready for new tasks.
+## ✅ Step 4: Update HTML pages
+- [x] dashboard.html API_URL → 3001/api
+- [x] produtos.html API_URL → 3001/api  
+- [x] producao.html API_URL → 3001/api
+
+## ⬜ Step 5: Test changes
+- [ ] Kill node/electron processes
+- [ ] Test curl http://localhost:3001/api/health
+- [ ] Run npm run dev
+
+## ⬜ Step 6: Complete
+- [ ] Verify no fetch errors
+- [ ] Update TODO.md as done
+- [ ] attempt_completion
+

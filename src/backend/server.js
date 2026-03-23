@@ -43,12 +43,13 @@ app.get('/health', (req, res) => {
 });
 
 // Server ready
-app.listen(PORT, 'localhost', () => {
+const server = app.listen(PORT, 'localhost', () => {
   console.log(`🚀 Backend server running on http://localhost:${PORT}`);
 });
 
 // Graceful shutdown
-const server = app;
+// Fixed: const server = app.listen(...) above
+
 process.on('SIGTERM', () => {
   console.log('🛑 Shutting down server...');
   server.close(() => {

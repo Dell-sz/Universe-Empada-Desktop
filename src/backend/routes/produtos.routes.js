@@ -16,7 +16,7 @@ router.get('/', async (req, res, next) => {
 // GET /api/produtos/:id
 router.get('/:id', validateId, async (req, res, next) => {
   try {
-    const produto = await ProdutoController.buscar(req.params.id);
+    const produto = await ProdutoController.buscarPorId(req.params.id);
     if (!produto) {
       return res.status(404).json({ error: 'Produto não encontrado' });
     }
@@ -25,6 +25,17 @@ router.get('/:id', validateId, async (req, res, next) => {
     next(error);
   }
 });
+
+// GET /api/produtos/low-stock
+router.get('/low-stock', async (req, res, next) => {
+  try {
+    const produtos = await ProdutoController.estoqueBaixo();
+    res.json(produtos);
+  } catch (error) {
+    next(error);
+  }
+});
+
 
 // POST /api/produtos
 router.post('/', validateProduto, async (req, res, next) => {

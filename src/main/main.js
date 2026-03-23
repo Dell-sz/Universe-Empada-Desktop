@@ -1,9 +1,7 @@
 ﻿const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
-const { spawn } = require('child_process');
 
 let mainWindow;
-let backendProcess;
 
 function createWindow() {
     mainWindow = new BrowserWindow({
@@ -15,7 +13,7 @@ function createWindow() {
             preload: path.join(__dirname, 'preload.js')
         },
         show: false,
-        icon: path.join(__dirname, '../../resources/icons/icon.ico')
+        icon: path.join(__dirname, '../../renderer/assets/logo.png')
     });
 
     const indexPath = path.join(__dirname, '../renderer/pages/dashboard.html');
@@ -33,58 +31,27 @@ function createWindow() {
     }
 }
 
-function startBackend() {
-    return new Promise((resolve, reject) => {
-        const backendPath = path.join(__dirname, '../backend/server.js');
-        
-        backendProcess = spawn('node', [backendPath], {
-            stdio: 'pipe',
-            shell: true
-        });
+app.whenReady().then(() => {
+    console.log('Electron app ready - conectando ao backend externo na porta 3001');
+    createWindow();
+});
 
-        backendProcess.stdout.on('data', (data) => {
-            console.log(`[Backend]: ${data}`);
-            if (data.includes('Servidor rodando') || data.includes('conectado')) {
-                resolve();
-            }
-        });
-
-        backendProcess.stderr.on('data', (data) => {
-            console.error(`[Backend Error]: ${data}`);
-        });
-
-        backendProcess.on('error', (err) => {
-            reject(err);
-        });
-        
-        setTimeout(() => reject(new Error('Timeout')), 10000);
-    });
-}
-
-app.whenReady().then(async () => {
-    try {
-        await startBackend();
-        createWindow();
-    } catch (error) {
-        console.error('Erro:', error);
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
         app.quit();
     }
 });
 
-app.on('window-all-closed', () => {
-    if (backendProcess) backendProcess.kill();
-    if (process.platform !== 'darwin') app.quit();
-});
-
 ipcMain.handle('api-request', async (event, { method, url, data }) => {
     try {
-        const response = await fetch(`http://localhost:3000${url}`, {
+        const response = await fetch(`http://localhost:3001${url}`, {
             method,
             headers: { 'Content-Type': 'application/json' },
             body: data ? JSON.stringify(data) : undefined
         });
         return await response.json();
     } catch (error) {
+        console.error('API Error:', error);
         return { error: error.message };
     }
 });
