@@ -14,9 +14,7 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE']
 }));
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Serve static files for renderer
+app.use(express.urlencoded({ extended: true }));\napp.use(require('body-parser').json());\napp.use(require('body-parser').urlencoded({ extended: true }));\n\n// Serve static files for renderer
 app.use('/assets', express.static(path.join(__dirname, '../renderer/assets')));
 app.use('/pages', express.static(path.join(__dirname, '../renderer/pages')));
 
@@ -36,10 +34,7 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-const server = app.listen(PORT, 'localhost', () => {
-  console.log(`🚀 Backend rodando em http://localhost:${PORT}`);
-  console.log(`📊 Health: http://localhost:${PORT}/health`);
-});
+const { testConnection } = require('./models/database');\n\nconst startServer = async () => {\n  const dbConnected = await testConnection();\n  \n  if (!dbConnected) {\n    console.error('❌ Não foi possível conectar ao banco de dados. Encerrando...');\n    process.exit(1);\n  }\n\n  const server = app.listen(PORT, 'localhost', () => {\n    console.log(`🚀 Servidor rodando na porta ${PORT}`);\n  });\n  return server;\n};\n\nstartServer().catch(console.error);
 
 // Graceful shutdown
 process.on('SIGTERM', shutDown);

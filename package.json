@@ -1,0 +1,43 @@
+{
+  "name": "universe-empada-desktop",
+  "version": "1.0.0",
+  "description": "Sistema de Controle de Produção - Universe da Empada",
+  "main": "src/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "SET NODE_ENV=development && electron .",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "db:init": "mysql -u root -p < src/database/schema.sql",
+    "backend": "node src/backend/server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mysql2": "^3.2.0",
+    "cors": "^2.8.5",
+    "body-parser": "^1.20.2"
+  },
+  "devDependencies": {
+    "electron": "^24.1.2",
+    "electron-builder": "^23.6.0",
+    "nodemon": "^2.0.22"
+  },
+  "build": {
+    "appId": "com.universeempada.desktop",
+    "productName": "Universe da Empada",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "resources/icons/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true
+    }
+  }
+}
+
