@@ -30,3 +30,13 @@ INSERT INTO perdas (produto_id, quantidade, motivo, data_perda) VALUES
 (1, 5, 'validade', CURDATE()),
 (3, 2, 'avaria', CURDATE());
 
+-- Sample clientes
+INSERT INTO clientes (nome, telefone, email, cpf) VALUES
+('Ana Paula', '11999999999', 'ana@email.com', '123.456.789-00'),
+('Roberto Lima', '21988888888', 'roberto@email.com', '987.654.321-00');
+
+-- Sample funcionarios
+INSERT INTO funcionarios (nome, telefone, cargo, salario) VALUES
+('João Silva', '31977777777', 'Produção', 2500.00),
+('Maria Santos',
+

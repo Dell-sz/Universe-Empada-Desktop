@@ -9,11 +9,25 @@
     "src/**/*",
     "node_modules/**/*"
   ],
+  "extraResources": [
+    {
+      "from": "src/backend",
+      "to": "backend",
+      "filter": [
+        "**/*"
+      ]
+    }
+  ],
+  "asarUnpack": [
+    "backend/**/*"
+  ],
   "win": {
     "target": [
       {
         "target": "nsis",
-        "arch": ["x64"]
+        "arch": [
+          "x64"
+        ]
       }
     ],
     "icon": "resources/icons/icon.ico"
