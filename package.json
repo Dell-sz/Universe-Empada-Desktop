@@ -1,6 +1,6 @@
 {
   "name": "universe-empada-desktop",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Sistema de Controle de Produção - Universe da Empada",
   "main": "src/main/main.js",
   "scripts": {
@@ -9,7 +9,8 @@
     "build": "electron-builder",
     "build:win": "electron-builder --win",
     "db:init": "mysql -u root -p < src/database/schema.sql",
-    "backend": "node src/backend/server.js"
+    "backend": "node src/backend/server.js",
+    "postinstall": "node postinstall.js"
   },
   "dependencies": {
     "dotenv": "^16.0.3",
@@ -40,4 +41,3 @@
     }
   }
 }
-
