@@ -27,6 +27,7 @@ app.use('/api/vendas', require('./routes/vendas.routes'));
 app.use('/api/estoque', require('./routes/estoque.routes'));
 app.use('/api/relatorios', require('./routes/relatorios.routes'));
 app.use('/api/dashboard', require('./routes/dashboard.routes'));
+app.use('/api/auth', require('./routes/auth.routes'));
 
 // Error handler middleware
 app.use(require('./middlewares/error.handler').errorHandler);
